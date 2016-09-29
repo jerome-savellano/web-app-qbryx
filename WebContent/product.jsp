@@ -44,7 +44,7 @@ div{
 		</div>	
 		<div>
 			<h3><b>Quantity in cart: </b></h3>
-			<h3><i>0</i></h3>
+			<h3><i>${quantity}</i></h3>
 		</div>
 		<form class="form-inline" method="post">
 			<div class="form-group">

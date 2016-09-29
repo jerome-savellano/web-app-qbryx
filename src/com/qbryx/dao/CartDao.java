@@ -10,8 +10,11 @@ import com.qbryx.dm.User;
 public interface CartDao {
 	
 	List<Product> getProductsInCart(Customer customer);
+	int getQuantityOfProductFromCart(String cartId, String upc);
+	
+	Cart productAlreadyInCart(String cartId, String upc);
 	
 	boolean addProductInCart(Cart cart);
-	boolean updateProductInCart(Product product);
+	boolean updateProductInCart(Cart cart);
 	boolean deleteProductInCart(Product product);
 }

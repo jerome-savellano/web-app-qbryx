@@ -24,19 +24,28 @@ public class CustomerServiceImpl implements CustomerService {
 	public boolean addToCart(String cardId, Product product, int quantity) {
 		// TODO Auto-generated method stub
 		boolean isSuccessful = false;
-	
+		System.out.println(cardId + product.getUpc());
 		if(cardId != null || product != null){
-			Cart cart = new Cart();
-			
-			cart.setCartId(cardId);
-			cart.setUpc(product.getUpc());
-			cart.setQuantity(quantity);
-			cart.setAmount(computeTotalAmount(product, quantity));
-			cart.setIsPurchased(0);
-			cart.setDateAdded(CurrentDate.getCurrentDate());
-			
-			cartDao.addProductInCart(cart);
-			isSuccessful = true;
+			if(cartDao.productAlreadyInCart(cardId, product.getUpc()) != null){
+				System.out.println("not null");
+				Cart cart = cartDao.productAlreadyInCart(cardId, product.getUpc());
+				cart.setQuantity(cart.getQuantity() + quantity);
+				cart.setAmount(cart.getAmount().add(computeTotalAmount(product, quantity)));
+				
+				isSuccessful = cartDao.updateProductInCart(cart);
+			}else{
+				System.out.println("null");
+				Cart cart = new Cart();
+				cart.setCartId(cardId);
+				cart.setUpc(product.getUpc());
+				cart.setQuantity(quantity);
+				cart.setAmount(computeTotalAmount(product, quantity));
+				cart.setIsPurchased(0);
+				cart.setDateAdded(CurrentDate.getCurrentDate());
+				
+				cartDao.addProductInCart(cart);
+				isSuccessful = true;
+			}
 		}
 		
 		return isSuccessful;
@@ -48,5 +57,11 @@ public class CustomerServiceImpl implements CustomerService {
 		totalAmount = product.getPrice().multiply(new BigDecimal(quantity));
 		
 		return totalAmount;
+	}
+
+	@Override
+	public int getItemQuantityOnCart(String cartId, String upc) {
+		// TODO Auto-generated method stub
+		return cartDao.getQuantityOfProductFromCart(cartId, upc);
 	}
 }

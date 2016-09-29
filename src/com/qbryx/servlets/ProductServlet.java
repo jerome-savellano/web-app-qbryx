@@ -44,12 +44,14 @@ public class ProductServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		Customer customer = (Customer) request.getSession().getAttribute("customer");
 				
 		if(request.getSession().getAttribute("customer") != null){
 			upc = request.getParameter("upc");
 			category = request.getParameter("category");
 			
 			request.setAttribute("product", product(upc));
+			request.setAttribute("quantity", quantity(customer.getCartId(), upc));
 			request.setAttribute("category", category);
 			dispatcher("/product.jsp", request, response);
 		}else{
@@ -93,5 +95,9 @@ public class ProductServlet extends HttpServlet {
 	
 	private Product product(String upc){
 		return productService.getProductByUpc(upc);
+	}
+	
+	private int quantity(String cartId, String upc){
+		return customerService.getItemQuantityOnCart(cartId, upc);
 	}
 }

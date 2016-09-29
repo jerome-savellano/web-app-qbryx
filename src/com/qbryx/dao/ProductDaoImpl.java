@@ -48,6 +48,7 @@ public class ProductDaoImpl implements ProductDao {
 			}	
 		}
 		
+		ConnectionManager.closeConnection();
 		return products;
 	}
 
@@ -85,6 +86,7 @@ public class ProductDaoImpl implements ProductDao {
 		
 		}
 		
+		ConnectionManager.closeConnection();
 		return products;
 	}
 
@@ -117,6 +119,7 @@ public class ProductDaoImpl implements ProductDao {
 			}
 		}
 		
+		ConnectionManager.closeConnection();
 		return product;
 	}
 }

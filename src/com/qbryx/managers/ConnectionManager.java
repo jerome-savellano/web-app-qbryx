@@ -43,4 +43,13 @@ public class ConnectionManager {
 		
 		return preparedStatement;
 	}
+	
+	public static void closeConnection(){
+		try {
+			getConnection().close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

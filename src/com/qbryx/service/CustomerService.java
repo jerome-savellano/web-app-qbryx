@@ -8,4 +8,5 @@ import com.qbryx.dm.Product;
 public interface CustomerService {
 
 	boolean addToCart(String cardId, Product product, int quantity);
+	int getItemQuantityOnCart(String cardId, String upc);
 }

@@ -36,6 +36,7 @@ public class CategoryDaoImpl implements CategoryDao {
 			}
 		}
 	
+		ConnectionManager.closeConnection();
 		return categories;
 	}
 
