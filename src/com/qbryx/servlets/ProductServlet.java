@@ -73,7 +73,8 @@ public class ProductServlet extends HttpServlet {
 		isProductAddedToCart = customerService.addToCart(customer.getCartId(), product(upc), quantity);
 		
 		request.setAttribute("wasalak", isProductAddedToCart);
-		doGet(request, response);
+		response.setHeader("Refresh", "10:URL=customer");
+		response.sendRedirect("try.jsp");
 	}
 	
 	private RequestDispatcher dispatcher(String jsp, HttpServletRequest request, HttpServletResponse response){

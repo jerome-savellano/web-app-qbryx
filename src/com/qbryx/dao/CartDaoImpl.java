@@ -1,15 +1,15 @@
 package com.qbryx.dao;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.qbryx.dm.Cart;
+import com.qbryx.dm.CartProduct;
 import com.qbryx.dm.Customer;
 import com.qbryx.dm.Product;
-import com.qbryx.dm.User;
 import com.qbryx.managers.ConnectionManager;
 
 public class CartDaoImpl implements CartDao {
@@ -17,12 +17,41 @@ public class CartDaoImpl implements CartDao {
 	private static final String ADD_PRODUCT_IN_CART = "insert into customer_cart_items (cart_id, upc, quantity, amount, is_purchased, date_added) values (?, ?, ?, ?, ?, ?)";
 	private static final String GET_QUANTITY_PRODUCT_FROM_CART = "select quantity from customer_cart_items where cart_id = ? and upc = ?";
 	private static final String GET_PRODUCT_FROM_CART = "select cart_id, upc, quantity, amount, is_purchased, date_added from customer_cart_items where cart_id = ? and upc = ?";
+	private static final String GET_PRODUCTS_FROM_CART = "select p.name, p.upc, c.amount, c.quantity, c.date_added from customer_cart_items as c inner join product as p on c.upc = p.upc where c.cart_id = ?";
 	private static final String UPDATE_PRODUCT_IN_CART = "UPDATE `qbryx`.`customer_cart_items` SET `upc` = ?, `quantity` = ?, `amount` = ?, `is_purchased` = ?, `date_added` = ? WHERE `cart_id` = ?";
 	
 	@Override
-	public List<Product> getProductsInCart(Customer customer) {
+	public List<CartProduct> getProductsInCart(String cartId) {
 		// TODO Auto-generated method stub
-		return null;
+		List<CartProduct> cartProducts = new ArrayList<>();
+		
+		if(ConnectionManager.getConnection() != null){
+			PreparedStatement stmt;
+				
+			try {
+				stmt = ConnectionManager.prepareStatement(GET_PRODUCTS_FROM_CART);
+				stmt.setString(1, cartId);
+				
+				ResultSet rs = stmt.executeQuery();
+				
+				while(rs.next()){
+					CartProduct cartProduct = new CartProduct();
+					
+					cartProduct.setName(rs.getString("name"));
+					cartProduct.setTotalAmount(rs.getBigDecimal("amount"));
+					cartProduct.setUpc(rs.getString("upc"));
+					cartProduct.setQuantity(rs.getInt("quantity"));
+					cartProduct.setDateAdded(rs.getDate("date_added"));
+					
+					cartProducts.add(cartProduct);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch bloc
+				e.printStackTrace();
+			}
+		}
+		
+		return cartProducts;
 	}
 
 	@Override

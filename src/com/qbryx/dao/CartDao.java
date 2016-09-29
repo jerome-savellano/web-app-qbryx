@@ -3,13 +3,14 @@ package com.qbryx.dao;
 import java.util.List;
 
 import com.qbryx.dm.Cart;
+import com.qbryx.dm.CartProduct;
 import com.qbryx.dm.Customer;
 import com.qbryx.dm.Product;
 import com.qbryx.dm.User;
 
 public interface CartDao {
 	
-	List<Product> getProductsInCart(Customer customer);
+	List<CartProduct> getProductsInCart(String cartId);
 	int getQuantityOfProductFromCart(String cartId, String upc);
 	
 	Cart productAlreadyInCart(String cartId, String upc);

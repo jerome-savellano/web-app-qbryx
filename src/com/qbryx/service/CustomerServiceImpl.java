@@ -8,6 +8,7 @@ import com.qbryx.dao.CartDaoImpl;
 import com.qbryx.dao.CategoryDao;
 import com.qbryx.dao.CategoryDaoImpl;
 import com.qbryx.dm.Cart;
+import com.qbryx.dm.CartProduct;
 import com.qbryx.dm.Category;
 import com.qbryx.dm.Product;
 import com.qbryx.util.CurrentDate;
@@ -24,17 +25,14 @@ public class CustomerServiceImpl implements CustomerService {
 	public boolean addToCart(String cardId, Product product, int quantity) {
 		// TODO Auto-generated method stub
 		boolean isSuccessful = false;
-		System.out.println(cardId + product.getUpc());
 		if(cardId != null || product != null){
 			if(cartDao.productAlreadyInCart(cardId, product.getUpc()) != null){
-				System.out.println("not null");
 				Cart cart = cartDao.productAlreadyInCart(cardId, product.getUpc());
 				cart.setQuantity(cart.getQuantity() + quantity);
 				cart.setAmount(cart.getAmount().add(computeTotalAmount(product, quantity)));
 				
 				isSuccessful = cartDao.updateProductInCart(cart);
 			}else{
-				System.out.println("null");
 				Cart cart = new Cart();
 				cart.setCartId(cardId);
 				cart.setUpc(product.getUpc());
@@ -63,5 +61,11 @@ public class CustomerServiceImpl implements CustomerService {
 	public int getItemQuantityOnCart(String cartId, String upc) {
 		// TODO Auto-generated method stub
 		return cartDao.getQuantityOfProductFromCart(cartId, upc);
+	}
+
+	@Override
+	public List<CartProduct> getProductsOnCart(String cartId) {
+		// TODO Auto-generated method stub
+		return cartDao.getProductsInCart(cartId);
 	}
 }

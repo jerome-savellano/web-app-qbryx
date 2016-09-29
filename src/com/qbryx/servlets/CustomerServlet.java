@@ -10,8 +10,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.qbryx.dm.CartProduct;
 import com.qbryx.dm.Category;
+import com.qbryx.dm.Customer;
 import com.qbryx.dm.Product;
+import com.qbryx.service.CustomerService;
+import com.qbryx.service.CustomerServiceImpl;
 import com.qbryx.service.ProductService;
 import com.qbryx.service.ProductServiceImpl;
 
@@ -23,7 +27,6 @@ public class CustomerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
-	private ProductService productService = new ProductServiceImpl();
 	private boolean categorySelected = false;
 	private boolean invalidOptionSelected = false;
 	private String INVALID_OPTION = "SELECT CATEGORY";
@@ -35,8 +38,10 @@ public class CustomerServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("wowowee");
-		request.setAttribute("categories", categories());
+		Customer customer = (Customer) request.getSession().getAttribute("customer");
+		
+		request.setAttribute("categories", productService().getCategories());
+		request.setAttribute("productsInCart", customerService().getProductsOnCart(customer.getCartId()));
 		dispatcher("/home_customer.jsp", request, response);
 	}
 
@@ -45,21 +50,25 @@ public class CustomerServlet extends HttpServlet {
 			
 		String category = request.getParameter("category");
 
+		Customer customer = (Customer) request.getSession().getAttribute("customer");
+
 		if(category != null){
+			
 			categorySelected = true;
 			
-			List<Product> products = productService.getProductsByCategory(category);
+			List<Product> products = productService().getProductsByCategory(category);
 			
 			request.setAttribute("products", products);
 			request.setAttribute("categorySelected", categorySelected);
-			request.setAttribute("categories", categories());
+			request.setAttribute("categories", productService().getCategories());
 			request.setAttribute("category", category);
+			request.setAttribute("productsInCart", customerService().getProductsOnCart(customer.getCartId()));
 			dispatcher("/home_customer.jsp", request, response);
 		}else{
 			invalidOptionSelected = true;
 				
 			request.setAttribute("invalidOptionSelected", invalidOptionSelected);
-			request.setAttribute("categories", categories());
+			request.setAttribute("categories", productService().getCategories());
 			dispatcher("/home_customer.jsp", request, response);
 		}
 	}
@@ -81,7 +90,11 @@ public class CustomerServlet extends HttpServlet {
 		return dispatcher;
 	}
 	
-	private List<Category> categories(){
-		return productService.getCategories();
+	private ProductService productService(){
+		return new ProductServiceImpl();
+	}
+	
+	private CustomerService customerService(){
+		return new CustomerServiceImpl();
 	}
 }

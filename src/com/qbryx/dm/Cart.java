@@ -12,7 +12,14 @@ public class Cart {
 	private BigDecimal amount;
 	private int isPurchased;
 	private Date dateAdded;
+	private List<Product> productsInCart;
 	
+	public List<Product> getProductsInCart() {
+		return productsInCart;
+	}
+	public void setProductsInCart(List<Product> productsInCart) {
+		this.productsInCart = productsInCart;
+	}
 	public String getCartId() {
 		return cartId;
 	}

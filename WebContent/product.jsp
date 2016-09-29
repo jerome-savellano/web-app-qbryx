@@ -56,9 +56,6 @@ div{
 		<c:if test="${wasalak}">
 			<div class="alert alert-success fade in" style="position: relative; width: 50%; padding: 20px;">
 				<strong>Success!</strong> Item added to cart!
-				<form action="customer">
-					<input type="submit" value="Back to Home" class="btn btn-info" style="position: absolute; top: 20%; right: 5px"/>
-				</form>
 			</div>
 			
 		</c:if>

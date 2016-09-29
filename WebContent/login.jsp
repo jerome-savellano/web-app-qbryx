@@ -31,16 +31,6 @@
         	<div class="col-md-4 col-md-offset-4">
 				<div style="background-color: #297f56; padding: 15px; border-radius: 5%;">
 					<h1 style="text-align: center; color: white;">QBRYX BRYKaBRAX</h1>
-					<% Boolean loginFailed = (Boolean) request.getAttribute("loginFailed");
-					   if(Boolean.TRUE.equals(loginFailed)){
-						   out.println("<div class ='alert alert-danger'>User account does not exist</div>");
-					   }
-					   
-					   Boolean fieldEmpty = (Boolean) request.getAttribute("fieldEmpty");
-					   
-					   if(Boolean.TRUE.equals(fieldEmpty)){
-						   out.println("<div class ='alert alert-warning'>Username/Password cannot be empty</div>");
-					   }%>
 					<form action="processLogin" method="post">
   					<div class="form-group" >
     					<label for="email" style="color: white;">Username:</label>
