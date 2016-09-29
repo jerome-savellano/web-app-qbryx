@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product getProductByUpc(long upc) {
+	public Product getProductByUpc(String upc) {
 		// TODO Auto-generated method stub
 		return productDao.getProductByUpc(upc);
 	}

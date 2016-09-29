@@ -34,7 +34,7 @@ public class ProductDaoImpl implements ProductDao {
 				while(rs.next()){
 					Product product = new Product();
 					
-					product.setUpc(rs.getInt("upc"));
+					product.setUpc(rs.getString("upc"));
 					product.setName(rs.getString("name"));
 					product.setCategory_id(rs.getString("category_id"));
 					product.setDescription(rs.getString("description"));
@@ -68,7 +68,7 @@ public class ProductDaoImpl implements ProductDao {
 				while(rs.next()){
 					Product product = new Product();
 					
-					product.setUpc(rs.getLong("upc"));
+					product.setUpc(rs.getString("upc"));
 					product.setName(rs.getString("name"));
 					product.setCategory_id(rs.getString("category_id"));
 					product.setDescription(rs.getString("description"));
@@ -89,7 +89,7 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	@Override
-	public Product getProductByUpc(long upc) {
+	public Product getProductByUpc(String upc) {
 		// TODO Auto-generated method stub
 		Product product = null;
 		
@@ -99,13 +99,13 @@ public class ProductDaoImpl implements ProductDao {
 			
 			try {
 				stmt = ConnectionManager.prepareStatement(GET_PRODUCT_BY_UPC);
-				stmt.setLong(1,  upc);
+				stmt.setString(1,  upc);
 				
 				ResultSet rs = stmt.executeQuery();
 				
 				if(rs.next()){
 					product = new Product();
-					product.setUpc(rs.getLong("upc"));
+					product.setUpc(rs.getString("upc"));
 					product.setName(rs.getString("name"));
 					product.setCategory_id(rs.getString("category_id"));
 					product.setDescription(rs.getString("description"));

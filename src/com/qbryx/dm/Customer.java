@@ -12,11 +12,11 @@ public class Customer extends User {
 
 	
 
-	public String getCart_id() {
+	public String getCartId() {
 		return cartId;
 	}
 
-	public void setCart_id(String cart_id) {
+	public void setCartId(String cart_id) {
 		this.cartId = cart_id;
 	}
 }

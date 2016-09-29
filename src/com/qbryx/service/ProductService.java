@@ -10,5 +10,5 @@ public interface ProductService {
 	List<Category> getCategories();
 	List<Product> getProductsByCategory(String categoryName);
 	
-	Product getProductByUpc(long upc);
+	Product getProductByUpc(String upc);
 }

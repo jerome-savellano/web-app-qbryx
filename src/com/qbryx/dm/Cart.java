@@ -1,13 +1,13 @@
 package com.qbryx.dm;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class Cart {
 	
 	private String cartId;
-	private long upc;
+	private String upc;
 	private int quantity;
 	private BigDecimal amount;
 	private int isPurchased;
@@ -19,10 +19,10 @@ public class Cart {
 	public void setCartId(String cartId) {
 		this.cartId = cartId;
 	}
-	public long getUpc() {
+	public String getUpc() {
 		return upc;
 	}
-	public void setUpc(long upc) {
+	public void setUpc(String upc) {
 		this.upc = upc;
 	}
 	public int getQuantity() {

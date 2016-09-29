@@ -1,12 +1,12 @@
 package com.qbryx.util;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
 
 public class CurrentDate {
 
 	public static Date getCurrentDate(){
-		return new Date();
+		return new Date(0);
 	}
 	
 	public static void main(String[] args){

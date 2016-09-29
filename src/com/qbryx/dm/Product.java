@@ -4,17 +4,17 @@ import java.math.BigDecimal;
 
 public class Product {
 	
-	private long upc;
+	private String upc;
 	private String category_id;
 	private String name; 
 	private String description; 
 	private BigDecimal price;
 	private int stock;
 	
-	public long getUpc() {
+	public String getUpc() {
 		return upc;
 	}
-	public void setUpc(long upc) {
+	public void setUpc(String upc) {
 		this.upc = upc;
 	}
 	public String getCategory_id() {

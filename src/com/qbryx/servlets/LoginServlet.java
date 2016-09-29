@@ -73,7 +73,7 @@ public class LoginServlet extends HttpServlet {
 				
 				Customer customer = (Customer) user;
 				HttpSession session = request.getSession();
-				session.setAttribute("username", customer.getUsername());
+				session.setAttribute("customer", customer);
 				response.sendRedirect("customer");
 			}else{
 				HttpSession session = request.getSession();

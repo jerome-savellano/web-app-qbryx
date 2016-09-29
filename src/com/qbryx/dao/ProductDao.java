@@ -10,5 +10,5 @@ public interface ProductDao {
 	List<Product> getAll();
 	List<Product> getByCategory(String categoryName);
 	
-	Product getProductByUpc(long upc);
+	Product getProductByUpc(String upc);
 }

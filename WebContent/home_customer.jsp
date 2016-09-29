@@ -42,7 +42,7 @@ function myFunction() {
 <body>
 	<div class="container">
 		<div style="display: inline-block;">
-			<h1>Hi, <c:out value="${username}"/>!</h1>
+			<h1>Hi, <c:out value="${customer.getUsername()}"/>!</h1>
 				<form method="post" action="customer" class="form-inline">	
 					<div class="form-group">		
 						<select class="form-control" style="width: 500px; font-size: 15px; heigth: 500px;" name="category">
@@ -66,7 +66,7 @@ function myFunction() {
    					<h1>${category}</h1>
 				</div>
   				<c:forEach items="${products}" var="item" varStatus="status">
-  					<a href="viewProduct?action=${item.getUpc()}&category=${category}" class="list-group-item">${item.getName()}</a>
+  					<a href="processProduct?upc=${item.getUpc()}&category=${category}" class="list-group-item">${item.getName()}</a>
   				</c:forEach>
 			</div>
 	</c:if>	

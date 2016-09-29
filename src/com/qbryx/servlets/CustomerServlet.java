@@ -35,7 +35,7 @@ public class CustomerServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-
+		System.out.println("wowowee");
 		request.setAttribute("categories", categories());
 		dispatcher("/home_customer.jsp", request, response);
 	}

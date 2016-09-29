@@ -9,28 +9,34 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.qbryx.dm.Customer;
 import com.qbryx.dm.Product;
+import com.qbryx.service.CustomerService;
+import com.qbryx.service.CustomerServiceImpl;
 import com.qbryx.service.ProductService;
 import com.qbryx.service.ProductServiceImpl;
 
 /**
  * Servlet implementation class ProductServlet
  */
-@WebServlet("/viewProduct")
+@WebServlet("/processProduct")
 public class ProductServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-	private ProductService productService = new ProductServiceImpl();
+	private ProductService productService;
+	private CustomerService customerService;
 	
 	private String upc = "";
 	private String category = "";
+	private boolean isProductAddedToCart = false;
 	
     public ProductServlet() {
         super();
-        // TODO Auto-generated constructor stub
+        productService = new ProductServiceImpl();
+        customerService = new CustomerServiceImpl();
     }
 
 	/**
@@ -38,18 +44,19 @@ public class ProductServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		if(request.getSession().getAttribute("username") != null){
-			upc = request.getParameter("action");
+				
+		if(request.getSession().getAttribute("customer") != null){
+			upc = request.getParameter("upc");
 			category = request.getParameter("category");
 			
-			Product product = productService.getProductByUpc(Long.parseLong(upc));
-			
-			request.setAttribute("product", product);
+			request.setAttribute("product", product(upc));
 			request.setAttribute("category", category);
 			dispatcher("/product.jsp", request, response);
 		}else{
 			response.sendRedirect("login.jsp");
 		}
+		
+		return;
 	}
 
 	/**
@@ -57,6 +64,13 @@ public class ProductServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		Customer customer = (Customer) request.getSession().getAttribute("customer");
+		upc = request.getParameter("upc");
+		int quantity = Integer.parseInt(request.getParameter("quantity"));
+		
+		isProductAddedToCart = customerService.addToCart(customer.getCartId(), product(upc), quantity);
+		
+		request.setAttribute("wasalak", isProductAddedToCart);
 		doGet(request, response);
 	}
 	
@@ -75,5 +89,9 @@ public class ProductServlet extends HttpServlet {
 		}
 		
 		return dispatcher;
+	}
+	
+	private Product product(String upc){
+		return productService.getProductByUpc(upc);
 	}
 }
