@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.qbryx.dm.Customer;
-import com.qbryx.dm.User;
+import com.qbryx.domain.Customer;
+import com.qbryx.domain.User;
 import com.qbryx.managers.ConnectionManager;
 
 public class UserDaoImpl implements UserDao {
@@ -43,6 +43,7 @@ public class UserDaoImpl implements UserDao {
 			}
 		}
 		
+		ConnectionManager.closeConnection();
 		return user;
 	}
 	
@@ -68,6 +69,7 @@ public class UserDaoImpl implements UserDao {
 			}
 		}
 		
+		ConnectionManager.closeConnection();
 		return cartId;
 	}
 }

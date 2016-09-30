@@ -9,12 +9,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.qbryx.dm.Customer;
-import com.qbryx.dm.Product;
+import com.qbryx.domain.Customer;
+import com.qbryx.domain.Product;
 import com.qbryx.service.CustomerService;
 import com.qbryx.service.CustomerServiceImpl;
 import com.qbryx.service.ProductService;
 import com.qbryx.service.ProductServiceImpl;
+import com.qbryx.util.ServiceFactory;
 
 /**
  * Servlet implementation class ProductServlet
@@ -25,18 +26,13 @@ public class ProductServlet extends HttpServlet {
        
     /**
      * @see HttpServlet#HttpServlet()
-     */
-	private ProductService productService;
-	private CustomerService customerService;
-	
+     */	
 	private String upc = "";
 	private String category = "";
 	private boolean isProductAddedToCart = false;
 	
     public ProductServlet() {
         super();
-        productService = new ProductServiceImpl();
-        customerService = new CustomerServiceImpl();
     }
 
 	/**
@@ -50,15 +46,18 @@ public class ProductServlet extends HttpServlet {
 			upc = request.getParameter("upc");
 			category = request.getParameter("category");
 			
-			request.setAttribute("product", product(upc));
-			request.setAttribute("quantity", quantity(customer.getCartId(), upc));
+			request.setAttribute("product", ServiceFactory.productService().getProductByUpc(upc));
+			request.setAttribute("quantity", ServiceFactory.customerService().getItemQuantityOnCart(customer.getCartId(), upc));
 			request.setAttribute("category", category);
 			dispatcher("/product.jsp", request, response);
 		}else{
-			response.sendRedirect("login.jsp");
+			upc = request.getParameter("upc");
+			category = request.getParameter("category");
+			
+			request.setAttribute("product", ServiceFactory.productService().getProductByUpc(upc));
+			request.setAttribute("category", category);
+			dispatcher("/manageProducts.jsp", request, response);
 		}
-		
-		return;
 	}
 
 	/**
@@ -69,14 +68,18 @@ public class ProductServlet extends HttpServlet {
 		
 		if(request.getSession().getAttribute("customer") != null){
 			Customer customer = (Customer) request.getSession().getAttribute("customer");
-			System.out.println(customer.getUsername());
-			upc = request.getParameter("upc");
+			
+			Product product = ServiceFactory.productService().getProductByUpc(request.getParameter("upc"));
 			int quantity = Integer.parseInt(request.getParameter("quantity"));
 			
-			isProductAddedToCart = customerService.addToCart(customer.getCartId(), product(upc), quantity);
+			boolean addToCartSuccessful = ServiceFactory.customerService().addToCart(customer.getCartId(), product, quantity);
 			
-			request.setAttribute("wasalak", isProductAddedToCart);
-			response.sendRedirect("success.jsp");
+			if(addToCartSuccessful){
+				response.sendRedirect("addedToCart.jsp");
+			}else{
+				response.sendRedirect("error.jsp");
+			}
+			
 		}else{
 			response.sendRedirect("login.jsp");
 		}
@@ -97,13 +100,5 @@ public class ProductServlet extends HttpServlet {
 		}
 		
 		return dispatcher;
-	}
-	
-	private Product product(String upc){
-		return productService.getProductByUpc(upc);
-	}
-	
-	private int quantity(String cartId, String upc){
-		return customerService.getItemQuantityOnCart(cartId, upc);
 	}
 }

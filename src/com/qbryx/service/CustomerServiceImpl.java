@@ -7,34 +7,40 @@ import com.qbryx.dao.CartDao;
 import com.qbryx.dao.CartDaoImpl;
 import com.qbryx.dao.CategoryDao;
 import com.qbryx.dao.CategoryDaoImpl;
-import com.qbryx.dm.Cart;
-import com.qbryx.dm.CartProduct;
-import com.qbryx.dm.Category;
-import com.qbryx.dm.Product;
+import com.qbryx.dao.ProductDao;
+import com.qbryx.dao.ProductDaoImpl;
+import com.qbryx.domain.Cart;
+import com.qbryx.domain.CartProduct;
+import com.qbryx.domain.Category;
+import com.qbryx.domain.Product;
 import com.qbryx.util.CurrentDate;
 
 public class CustomerServiceImpl implements CustomerService {
-	
-	CartDao cartDao;
-	
-	public CustomerServiceImpl(){
-		this.cartDao =  new CartDaoImpl();
+
+	private CartDao cartDao;
+	private ProductDao productDao;
+
+	public CustomerServiceImpl() {
+		this.cartDao = new CartDaoImpl();
+		this.productDao = new ProductDaoImpl();
 	}
 
 	@Override
 	public boolean addToCart(String cardId, Product product, int quantity) {
 		// TODO Auto-generated method stub
-		boolean isSuccessful = false;
-		if(cardId != null || product != null){
+		int quantityOnHand = productDao.getStock(product.getUpc());
+		
+		if(cartDao.productAlreadyInCart(cardId, product.getUpc()) != null){
+			Cart cart = cartDao.productAlreadyInCart(cardId, product.getUpc());
 			
-			if(cartDao.productAlreadyInCart(cardId, product.getUpc()) != null){
-				System.out.println("not null");
-				Cart cart = cartDao.productAlreadyInCart(cardId, product.getUpc());
+			if((quantity + cart.getQuantity()) <= quantityOnHand){
 				cart.setQuantity(cart.getQuantity() + quantity);
 				cart.setAmount(cart.getAmount().add(computeTotalAmount(product, quantity)));
-				
-				isSuccessful = cartDao.updateProductInCart(cart);
-			}else{
+
+				return cartDao.updateProductInCart(cart);
+			}
+		}else{
+			if(quantity < quantityOnHand){
 				Cart cart = new Cart();
 				cart.setCartId(cardId);
 				cart.setUpc(product.getUpc());
@@ -42,20 +48,19 @@ public class CustomerServiceImpl implements CustomerService {
 				cart.setAmount(computeTotalAmount(product, quantity));
 				cart.setIsPurchased(0);
 				cart.setDateAdded(CurrentDate.getCurrentDate());
-				
-				cartDao.addProductInCart(cart);
-				isSuccessful = true;
-			}
+
+				return cartDao.addProductInCart(cart);
+			}			
 		}
 		
-		return isSuccessful;
+		return false;
 	}
-	
-	private BigDecimal computeTotalAmount(Product product, int quantity){
+
+	private BigDecimal computeTotalAmount(Product product, int quantity) {
 		BigDecimal totalAmount = BigDecimal.ZERO;
-		
+
 		totalAmount = product.getPrice().multiply(new BigDecimal(quantity));
-		
+
 		return totalAmount;
 	}
 
@@ -69,5 +74,17 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<CartProduct> getProductsOnCart(String cartId) {
 		// TODO Auto-generated method stub
 		return cartDao.getProductsInCart(cartId);
+	}
+
+	@Override
+	public boolean removeToCart(String cartId, String upc) {
+		// TODO Auto-generated method stub
+		return cartDao.deleteProductInCart(cartId, upc);
+	}
+
+	@Override
+	public BigDecimal getTotalAmount(String cartId) {
+		// TODO Auto-generated method stub
+		return cartDao.getTotalAmount(cartId);
 	}
 }

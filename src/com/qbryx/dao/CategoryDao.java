@@ -2,7 +2,7 @@ package com.qbryx.dao;
 
 import java.util.List;
 
-import com.qbryx.dm.Category;
+import com.qbryx.domain.Category;
 
 public interface CategoryDao {
 

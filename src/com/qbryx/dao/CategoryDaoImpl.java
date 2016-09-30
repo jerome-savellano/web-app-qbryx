@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qbryx.dm.Category;
+import com.qbryx.domain.Category;
 import com.qbryx.managers.ConnectionManager;
 
 public class CategoryDaoImpl implements CategoryDao {

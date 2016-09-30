@@ -2,8 +2,8 @@ package com.qbryx.service;
 
 import java.util.List;
 
-import com.qbryx.dm.Category;
-import com.qbryx.dm.Product;
+import com.qbryx.domain.Category;
+import com.qbryx.domain.Product;
 
 public interface ProductService {
 
@@ -11,4 +11,5 @@ public interface ProductService {
 	List<Product> getProductsByCategory(String categoryName);
 	
 	Product getProductByUpc(String upc);
+	int getStock(String upc);
 }

@@ -2,7 +2,7 @@ package com.qbryx.service;
 
 import com.qbryx.dao.UserDao;
 import com.qbryx.dao.UserDaoImpl;
-import com.qbryx.dm.User;
+import com.qbryx.domain.User;
 
 public class LoginServiceImpl implements LoginService {
 	

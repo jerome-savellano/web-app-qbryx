@@ -1,15 +1,16 @@
 package com.qbryx.dao;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qbryx.dm.Cart;
-import com.qbryx.dm.CartProduct;
-import com.qbryx.dm.Customer;
-import com.qbryx.dm.Product;
+import com.qbryx.domain.Cart;
+import com.qbryx.domain.CartProduct;
+import com.qbryx.domain.Customer;
+import com.qbryx.domain.Product;
 import com.qbryx.managers.ConnectionManager;
 
 public class CartDaoImpl implements CartDao {
@@ -19,6 +20,8 @@ public class CartDaoImpl implements CartDao {
 	private static final String GET_PRODUCT_FROM_CART = "select cart_id, upc, quantity, amount, is_purchased, date_added from customer_cart_items where cart_id = ? and upc = ?";
 	private static final String GET_PRODUCTS_FROM_CART = "select p.name, p.upc, c.amount, c.quantity, c.date_added from customer_cart_items as c inner join product as p on c.upc = p.upc where c.cart_id = ?";
 	private static final String UPDATE_PRODUCT_IN_CART = "UPDATE `qbryx`.`customer_cart_items` SET `upc` = ?, `quantity` = ?, `amount` = ?, `is_purchased` = ?, `date_added` = ? WHERE `cart_id` = ? and `upc` = ?";
+	private static final String DELETE_PRODUCT_IN_CART = "delete from customer_cart_items where cart_id = ? and upc = ?";
+	private static final String GET_TOTAL_AMOUNT = "select sum(amount) as total_amount from customer_cart_items where cart_id = ?";
 	
 	@Override
 	public List<CartProduct> getProductsInCart(String cartId) {
@@ -38,7 +41,6 @@ public class CartDaoImpl implements CartDao {
 					CartProduct cartProduct = new CartProduct();
 					
 					cartProduct.setName(rs.getString("name"));
-					cartProduct.setTotalAmount(rs.getBigDecimal("amount"));
 					cartProduct.setUpc(rs.getString("upc"));
 					cartProduct.setQuantity(rs.getInt("quantity"));
 					cartProduct.setDateAdded(rs.getDate("date_added"));
@@ -51,13 +53,12 @@ public class CartDaoImpl implements CartDao {
 			}
 		}
 		
+		ConnectionManager.closeConnection();
 		return cartProducts;
 	}
 
 	@Override
-	public boolean addProductInCart(Cart cart) {
-		boolean isSuccessful = false;
-		
+	public boolean addProductInCart(CartProduct cartProduct, Cart cart) {
 		if(ConnectionManager.getConnection() != null){
 			PreparedStatement stmt;
 			
@@ -65,14 +66,12 @@ public class CartDaoImpl implements CartDao {
 			try {
 				stmt = ConnectionManager.prepareStatement(ADD_PRODUCT_IN_CART);
 				stmt.setString(1,  cart.getCartId());
-				stmt.setString(2, cart.getUpc());
-				stmt.setInt(3, cart.getQuantity());
-				stmt.setBigDecimal(4, cart.getAmount());
-				stmt.setInt(5, cart.getIsPurchased());
-				stmt.setDate(6, cart.getDateAdded());
+				stmt.setString(2, cartProduct.getUpc());
+				stmt.setInt(3, cartProduct.getQuantity());
+				stmt.setBigDecimal(4, cartProduct.getTotal());
 				
 				stmt.executeUpdate();
-				isSuccessful = true;
+				return true;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -81,25 +80,23 @@ public class CartDaoImpl implements CartDao {
 		}
 		
 		ConnectionManager.closeConnection();
-		return isSuccessful;
+		return false;
 	}
 
 	@Override
-	public boolean updateProductInCart(Cart cart) {
+	public boolean updateProductInCart(CartProduct cartProduct, Cart cart) {
 		// TODO Auto-generated method stub
 		if(cart != null && ConnectionManager.getConnection() != null){
 			PreparedStatement stmt;
 			
 			stmt = ConnectionManager.prepareStatement(UPDATE_PRODUCT_IN_CART);
 			try {
-				stmt.setString(1, cart.getUpc());
-				stmt.setInt(2, cart.getQuantity());
-				stmt.setBigDecimal(3, cart.getAmount());
-				stmt.setInt(4, cart.getIsPurchased());
-				stmt.setDate(5, cart.getDateAdded());
+				stmt.setString(1, cartProduct.getUpc());
+				stmt.setInt(2, cartProduct.getQuantity());
+				stmt.setBigDecimal(3, cartProduct.getTotal());
 				
 				stmt.setString(6, cart.getCartId());
-				stmt.setString(7, cart.getUpc());
+				stmt.setString(7, cartProduct.getUpc());
 				
 				stmt.executeUpdate();
 				return true;
@@ -114,13 +111,7 @@ public class CartDaoImpl implements CartDao {
 		ConnectionManager.closeConnection();
 		return false;
 	}
-
-	@Override
-	public boolean deleteProductInCart(Product product) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public int getQuantityOfProductFromCart(String cartId, String upc) {
 		// TODO Auto-generated method stub
@@ -150,9 +141,9 @@ public class CartDaoImpl implements CartDao {
 	}
 
 	@Override
-	public Cart productAlreadyInCart(String cartId, String upc) {
+	public CartProduct productAlreadyInCart(String cartId, String upc) {
 		// TODO Auto-generated method stub
-		Cart cart = null;
+		CartProduct cart = null;
 		
 		if(ConnectionManager.getConnection() != null){
 			PreparedStatement stmt;
@@ -165,13 +156,9 @@ public class CartDaoImpl implements CartDao {
 				ResultSet rs = stmt.executeQuery();
 				
 				if(rs.next()){
-					cart = new Cart();
-					cart.setCartId(rs.getString("cart_id"));
-					cart.setAmount(rs.getBigDecimal("amount"));
-					cart.setUpc(rs.getString("upc"));
-					cart.setIsPurchased(rs.getInt("is_purchased"));
+					cart = new CartProduct();
 					cart.setQuantity(rs.getInt("quantity"));
-					cart.setDateAdded(rs.getDate("date_added"));
+					cart.setUpc(rs.getString("upc"));
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -183,4 +170,56 @@ public class CartDaoImpl implements CartDao {
 		return cart;
 	}
 
+	@Override
+	public boolean deleteProductInCart(String cartId, String upc) {
+		// TODO Auto-generated method stub
+		if(ConnectionManager.getConnection() != null){
+			PreparedStatement stmt;
+			
+			
+			try {
+				stmt = ConnectionManager.prepareStatement(DELETE_PRODUCT_IN_CART);
+				stmt.setString(1, cartId);
+				stmt.setString(2, upc);
+				
+				stmt.executeUpdate();
+				return true;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		ConnectionManager.closeConnection();
+		return false;
+	}
+
+	@Override
+	public BigDecimal getTotalAmount(String cartId) {
+		// TODO Auto-generated method stub
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		
+		if(ConnectionManager.getConnection() != null){
+			PreparedStatement stmt;
+			
+			try {
+				stmt = ConnectionManager.prepareStatement(GET_TOTAL_AMOUNT);
+				stmt.setString(1, cartId);
+				
+				ResultSet rs = stmt.executeQuery();
+				
+				if(rs.next()){
+					totalAmount = rs.getBigDecimal("total_amount");
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+		
+		ConnectionManager.closeConnection();
+		return totalAmount;
+	}
 }

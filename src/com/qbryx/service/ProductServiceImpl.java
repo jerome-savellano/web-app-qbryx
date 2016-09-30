@@ -6,8 +6,8 @@ import com.qbryx.dao.CategoryDao;
 import com.qbryx.dao.CategoryDaoImpl;
 import com.qbryx.dao.ProductDao;
 import com.qbryx.dao.ProductDaoImpl;
-import com.qbryx.dm.Category;
-import com.qbryx.dm.Product;
+import com.qbryx.domain.Category;
+import com.qbryx.domain.Product;
 
 public class ProductServiceImpl implements ProductService {
 	
@@ -35,6 +35,12 @@ public class ProductServiceImpl implements ProductService {
 	public Product getProductByUpc(String upc) {
 		// TODO Auto-generated method stub
 		return productDao.getProductByUpc(upc);
+	}
+
+	@Override
+	public int getStock(String upc) {
+		// TODO Auto-generated method stub
+		return productDao.getStock(upc);
 	}
 
 }

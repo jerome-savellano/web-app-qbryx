@@ -1,6 +1,6 @@
 package com.qbryx.service;
 
-import com.qbryx.dm.User;
+import com.qbryx.domain.User;
 
 public interface LoginService {
 

@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.qbryx.dm.Category;
-import com.qbryx.dm.Customer;
-import com.qbryx.dm.User;
+import com.qbryx.domain.Category;
+import com.qbryx.domain.Customer;
+import com.qbryx.domain.User;
 import com.qbryx.service.LoginService;
 import com.qbryx.service.LoginServiceImpl;
 import com.qbryx.service.ProductService;
@@ -76,7 +76,7 @@ public class LoginServlet extends HttpServlet {
 			}else{
 				HttpSession session = request.getSession();
 				session.setAttribute("username", user.getUsername());
-				response.sendRedirect("home_management.jsp");
+				response.sendRedirect("management");
 			}
 		}else{
 			boolean loginFailed = true;

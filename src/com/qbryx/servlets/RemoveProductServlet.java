@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.qbryx.dm.Customer;
+import com.qbryx.domain.Customer;
+import com.qbryx.util.ServiceFactory;
 
 /**
  * Servlet implementation class RemoveProductServlet
@@ -19,6 +20,7 @@ public class RemoveProductServlet extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
+	
     public RemoveProductServlet() {
         super();
         // TODO Auto-generated constructor stub
@@ -29,10 +31,6 @@ public class RemoveProductServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String cartId = customer(request.getSession().getAttribute("customer")).getCartId();
-		String upc = request.getParameter("myObject");
-		
-		System.out.println(cartId + " " + upc + "aw");
 	}
 
 	/**
@@ -40,12 +38,21 @@ public class RemoveProductServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		boolean productRemoved = false;
+		
+		String cartId = customer(request.getSession().getAttribute("customer")).getCartId();
+		String upc = request.getParameter("username");
+		
+		productRemoved = ServiceFactory.customerService().removeToCart(cartId, upc);
+		
+		if(productRemoved){
+			response.sendRedirect("customer");
+		}else{
+			
+		}
 	}
 
-	private <T> Customer customer(T t){
-		Customer customer = (Customer) t;
-		
-		return customer;
+	private <T> Customer customer(T t){	
+		return (Customer) t;
 	}
 }

@@ -25,24 +25,43 @@
 	crossorigin="anonymous"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Welcome!</title>
+<style>
+#footer {
+	clear: both;
+	position: relative;
+	z-index: 10;
+	height: 3em;
+	margin-top: -3em;
+}
+</style>
 </head>
 <body>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-8">
-				<div class="page-header">
-					<h1>
-						Hi,
-						<c:out value="${customer.getUsername()}" />!
-					</h1>
-				</div>
+				<h1>
+					Hi,
+					<c:out value="${customer.getUsername()}" />!
+				</h1>
+				<form action="logout">
+					<input type="submit" class="btn btn-info" value="Logout">
+				</form>
 				<h2>Shopping cart</h2>
-				<form action="removeProductFromcart" method="get">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="email"><h4>Total Amount:</h4></label> <input
+							type="text" class="form-control" name="username"
+							value="&#8369; ${totalAmount}" disabled>
+					</div>
+					<button type="submit" class="btn btn-primary">Checkout</button>
+
+				</form>
+				<form action="removeProductFromcart" method="post">
 					<table class="table">
 						<thead>
 							<tr>
 								<th>Date added</th>
-								<th>Name</th>
+								<th>Product name</th>
 								<th>Quantity</th>
 								<th>Amount</th>
 							</tr>
@@ -50,15 +69,16 @@
 						<tbody>
 							<c:forEach items="${productsInCart}" var="product"
 								varStatus="status">
-								<input type="hidden" name="myObject" value="${product.getUpc()}" />
 								<tr class="active">
+									<input type="hidden" class="form-control" name="username"
+										value="${product.getUpc()}">
 									<td>${product.getDateAdded()}</td>
 									<td>${product.getName()}</td>
 									<td>${product.getQuantity()}</td>
 									<td style="color: green;">&#8369;
 										${product.getTotalAmount()}</td>
 									<td><input type="submit" class="btn btn-warning btn-xs"
-										value="Remove from cart" ></td>
+										value="Remove from cart"></td>
 								</tr>
 							</c:forEach>
 						</tbody>
