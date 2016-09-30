@@ -18,7 +18,7 @@ public class CartDaoImpl implements CartDao {
 	private static final String GET_QUANTITY_PRODUCT_FROM_CART = "select quantity from customer_cart_items where cart_id = ? and upc = ?";
 	private static final String GET_PRODUCT_FROM_CART = "select cart_id, upc, quantity, amount, is_purchased, date_added from customer_cart_items where cart_id = ? and upc = ?";
 	private static final String GET_PRODUCTS_FROM_CART = "select p.name, p.upc, c.amount, c.quantity, c.date_added from customer_cart_items as c inner join product as p on c.upc = p.upc where c.cart_id = ?";
-	private static final String UPDATE_PRODUCT_IN_CART = "UPDATE `qbryx`.`customer_cart_items` SET `upc` = ?, `quantity` = ?, `amount` = ?, `is_purchased` = ?, `date_added` = ? WHERE `cart_id` = ?";
+	private static final String UPDATE_PRODUCT_IN_CART = "UPDATE `qbryx`.`customer_cart_items` SET `upc` = ?, `quantity` = ?, `amount` = ?, `is_purchased` = ?, `date_added` = ? WHERE `cart_id` = ? and `upc` = ?";
 	
 	@Override
 	public List<CartProduct> getProductsInCart(String cartId) {
@@ -97,7 +97,9 @@ public class CartDaoImpl implements CartDao {
 				stmt.setBigDecimal(3, cart.getAmount());
 				stmt.setInt(4, cart.getIsPurchased());
 				stmt.setDate(5, cart.getDateAdded());
+				
 				stmt.setString(6, cart.getCartId());
+				stmt.setString(7, cart.getUpc());
 				
 				stmt.executeUpdate();
 				return true;

@@ -38,18 +38,23 @@ public class CustomerServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Customer customer = (Customer) request.getSession().getAttribute("customer");
-		
-		request.setAttribute("categories", productService().getCategories());
-		request.setAttribute("productsInCart", customerService().getProductsOnCart(customer.getCartId()));
-		dispatcher("/home_customer.jsp", request, response);
+		if(request.getSession().getAttribute("customer") != null){
+			Customer customer = (Customer) request.getSession().getAttribute("customer");
+			System.out.println(customer.getUsername());
+			
+			request.setAttribute("categories", productService().getCategories());
+			request.setAttribute("productsInCart", customerService().getProductsOnCart(customer.getCartId()));
+			dispatcher("/home_customer.jsp", request, response);
+		}else{
+			response.sendRedirect("login.jsp");
+		}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-			
+		redirectToLoginIfSessionIsNull(request, response);	
+		
 		String category = request.getParameter("category");
-
 		Customer customer = (Customer) request.getSession().getAttribute("customer");
 
 		if(category != null){
@@ -70,6 +75,17 @@ public class CustomerServlet extends HttpServlet {
 			request.setAttribute("invalidOptionSelected", invalidOptionSelected);
 			request.setAttribute("categories", productService().getCategories());
 			dispatcher("/home_customer.jsp", request, response);
+		}
+	}
+	
+	private void redirectToLoginIfSessionIsNull(HttpServletRequest request, HttpServletResponse response){
+		if(request.getSession().getAttribute("customer") == null){
+			try {
+				response.sendRedirect("/login.jsp");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

@@ -26,7 +26,9 @@ public class CustomerServiceImpl implements CustomerService {
 		// TODO Auto-generated method stub
 		boolean isSuccessful = false;
 		if(cardId != null || product != null){
+			
 			if(cartDao.productAlreadyInCart(cardId, product.getUpc()) != null){
+				System.out.println("not null");
 				Cart cart = cartDao.productAlreadyInCart(cardId, product.getUpc());
 				cart.setQuantity(cart.getQuantity() + quantity);
 				cart.setAmount(cart.getAmount().add(computeTotalAmount(product, quantity)));

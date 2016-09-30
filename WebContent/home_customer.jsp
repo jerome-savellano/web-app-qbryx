@@ -31,31 +31,39 @@
 		<div class="row">
 			<div class="col-md-8">
 				<div class="page-header">
-					<h1>Hi, <c:out value="${customer.getUsername()}"/>!</h1>
+					<h1>
+						Hi,
+						<c:out value="${customer.getUsername()}" />!
+					</h1>
 				</div>
 				<h2>Shopping cart</h2>
-				<table class="table">
-					<thead>
-						<tr>
-							<th>Date added</th>
-							<th>Name</th>
-							<th>Quantity</th>
-							<th>Amount</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach items="${productsInCart}" var="product"
-							varStatus="status">
-							<tr class="active">
-								<td>${product.getDateAdded()}</td>
-								<td>${product.getName()}</td>
-								<td>${product.getQuantity()}</td>
-								<td style="color: green;">${product.getTotalAmount()} php</td>
-								<td><input type="submit" class="btn btn-warning btn-xs" value="Remove from cart"></td>
+				<form action="removeProductFromcart" method="get">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Date added</th>
+								<th>Name</th>
+								<th>Quantity</th>
+								<th>Amount</th>
 							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
+						</thead>
+						<tbody>
+							<c:forEach items="${productsInCart}" var="product"
+								varStatus="status">
+								<input type="hidden" name="myObject" value="${product.getUpc()}" />
+								<tr class="active">
+									<td>${product.getDateAdded()}</td>
+									<td>${product.getName()}</td>
+									<td>${product.getQuantity()}</td>
+									<td style="color: green;">&#8369;
+										${product.getTotalAmount()}</td>
+									<td><input type="submit" class="btn btn-warning btn-xs"
+										value="Remove from cart" ></td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</form>
 			</div>
 			<div class="col-md-4">
 				<h1>Browse products</h1>

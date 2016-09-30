@@ -66,15 +66,20 @@ public class ProductServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Customer customer = (Customer) request.getSession().getAttribute("customer");
-		upc = request.getParameter("upc");
-		int quantity = Integer.parseInt(request.getParameter("quantity"));
 		
-		isProductAddedToCart = customerService.addToCart(customer.getCartId(), product(upc), quantity);
-		
-		request.setAttribute("wasalak", isProductAddedToCart);
-		response.setHeader("Refresh", "10:URL=customer");
-		response.sendRedirect("try.jsp");
+		if(request.getSession().getAttribute("customer") != null){
+			Customer customer = (Customer) request.getSession().getAttribute("customer");
+			System.out.println(customer.getUsername());
+			upc = request.getParameter("upc");
+			int quantity = Integer.parseInt(request.getParameter("quantity"));
+			
+			isProductAddedToCart = customerService.addToCart(customer.getCartId(), product(upc), quantity);
+			
+			request.setAttribute("wasalak", isProductAddedToCart);
+			response.sendRedirect("success.jsp");
+		}else{
+			response.sendRedirect("login.jsp");
+		}
 	}
 	
 	private RequestDispatcher dispatcher(String jsp, HttpServletRequest request, HttpServletResponse response){

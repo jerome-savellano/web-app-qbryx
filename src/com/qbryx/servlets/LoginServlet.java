@@ -67,8 +67,6 @@ public class LoginServlet extends HttpServlet {
 		user = loginService.getUser(userName);
 		
 		if(user != null && user.getPassword().equals(password)){
-
-			
 			if(user.getUserType() == 1){
 				
 				Customer customer = (Customer) user;
